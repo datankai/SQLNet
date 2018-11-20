@@ -116,7 +116,7 @@ class SQLNetCondPredictor(nn.Module):
         # Then run the LSTM and predict condition number.
         e_num_col, col_num = col_name_encode(col_inp_var, col_name_len,
                 col_len, self.cond_num_name_enc)
-        num_col_att_val = self.cond_num_col_att(e_num_col).squeeze()
+        num_col_att_val = self.cond_num_col_att(e_num_col).squeeze(2)
         for idx, num in enumerate(col_num):
             if num < max(col_num):
                 num_col_att_val[idx, num:] = -100
@@ -130,7 +130,7 @@ class SQLNetCondPredictor(nn.Module):
         h_num_enc, _ = run_lstm(self.cond_num_lstm, x_emb_var, x_len,
                 hidden=(cond_num_h1, cond_num_h2))
 
-        num_att_val = self.cond_num_att(h_num_enc).squeeze()
+        num_att_val = self.cond_num_att(h_num_enc).squeeze(2)
 
         for idx, num in enumerate(x_len):
             if num < max_x_len:
