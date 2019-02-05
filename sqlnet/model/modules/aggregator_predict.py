@@ -45,15 +45,15 @@ class AggPredictor(nn.Module):
                 aux_range = aux_range.cuda()
             chosen_e_col = e_col[aux_range, chosen_sel_idx]
             att_val = torch.bmm(self.agg_att(h_enc), 
-                    chosen_e_col.unsqueeze(2)).squeeze()
+                    chosen_e_col.unsqueeze(2)).squeeze(2)
         else:
-            att_val = self.agg_att(h_enc).squeeze()
+            att_val = self.agg_att(h_enc).squeeze(2)
 
         for idx, num in enumerate(x_len):
             if num < max_x_len:
                 att_val[idx, num:] = -100
         att = self.softmax(att_val)
-
-        K_agg = (h_enc * att.unsqueeze(2).expand_as(h_enc)).sum(1)
+        unsqueezed = att.unsqueeze(2)
+        K_agg = (h_enc * unsqueezed.expand_as(h_enc)).sum(1)
         agg_score = self.agg_out(K_agg)
         return agg_score

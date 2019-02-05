@@ -48,7 +48,7 @@ class SelPredictor(nn.Module):
             K_sel_expand = (h_enc.unsqueeze(1) * att.unsqueeze(3)).sum(2)
         else:
             h_enc, _ = run_lstm(self.sel_lstm, x_emb_var, x_len)
-            att_val = self.sel_att(h_enc).squeeze()
+            att_val = self.sel_att(h_enc).squeeze(2)
             for idx, num in enumerate(x_len):
                 if num < max_x_len:
                     att_val[idx, num:] = -100
